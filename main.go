@@ -12,7 +12,7 @@ const (
 	CHUNKS = 8
 )
 
-var mu sync.Mutex
+//var mu sync.Mutex
 
 // generateRandomElements generates random elements.
 func generateRandomElements(size int) []int {
@@ -23,9 +23,9 @@ func generateRandomElements(size int) []int {
 		return []int{}
 	}
 	s := make([]int, size)
-	rand.NewSource(time.Now().UnixNano())
-		for i := 0; i < size; i++ {
-		s[i] = rand.Intn(size + 1)
+	for i := 0; i < size; i++ {
+		s[i] = rand.Intn(100000000)
+
 	}
 	return s
 }
@@ -34,9 +34,9 @@ func generateRandomElements(size int) []int {
 func maximum(data []int) int {
 	// ваш код здесь
 	if len(data) == 0 {
-		panic("Ошибка: пустой срез")
+		return 0
 	}
-max := data[0]
+	max := data[0]
 	for i := range data {
 		if max < data[i] {
 			max = data[i]
@@ -51,16 +51,15 @@ func maxChunks(data []int) int {
 	array := make([]int, CHUNKS)
 	var delta = (len(data) / CHUNKS) + 1
 	if len(data) == 0 {
-		panic("Ошибка: пустой срез")
-	}
-	if CHUNKS <= 0 {
-		panic("Ошибка: количество потоков<=0")
+		return 0
 	}
 
 	var wg sync.WaitGroup
 
 	wg.Add(CHUNKS)
 	for i := 0; i < CHUNKS; i++ {
+
+		resultCh := make(chan int, CHUNKS)
 		go func(i int) {
 			defer wg.Done()
 			start := delta * i
@@ -68,17 +67,19 @@ func maxChunks(data []int) int {
 			if i == CHUNKS-1 {
 				stop = len(data)
 			}
-			max := data[start]
-			for j := start; j < stop; j++ {
-				if max < data[j] {
-					max = data[j]
-				}
-			}
-			mu.Lock()
-			array[i] = max
-			mu.Unlock()
-		}(i)
 
+			max := maximum(data[start:stop]) //data[start]
+			//for j := start; j < stop; j++ {
+			//	if max < data[j] {
+			//		max = data[j]
+			//	}
+			//	}
+			//mu.Lock()
+			//array[i] = max
+			//mu.Unlock()
+			resultCh <- max
+		}(i)
+		array[i] = <-resultCh
 	}
 	wg.Wait()
 	return maximum(array)
@@ -91,15 +92,12 @@ func main() {
 	fmt.Println("Ищем максимальное значение в один поток")
 	start1 := time.Now()
 	max1 := maximum(arrSIZE)
-	elapsed := time.Since(start1)
-	elapsed1 := elapsed.Microseconds()
+	elapsed1 := time.Since(start1).Microseconds()
 	fmt.Printf("Максимальное значение элемента: %d\nВремя поиска: %d ms\n", max1, elapsed1)
-
 	fmt.Printf("Ищем максимальное значение в количестве потоков равном %d\n", CHUNKS)
 	// ваш код здесь
 	start2 := time.Now()
 	max2 := maxChunks(arrSIZE)
-	elapsed = time.Since(start2)
-	elapsed2 := elapsed.Microseconds()
+	elapsed2 := time.Since(start2).Microseconds()
 	fmt.Printf("Максимальное значение элемента: %d\nВремя поиска: %d µs\n", max2, elapsed2)
 }
