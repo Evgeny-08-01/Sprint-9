@@ -12,8 +12,7 @@ const (
 	SIZE   = 100_000_000
 	CHUNKS = 8
 )
-
-// generateRandomElements generates random elements.
+	// generateRandomElements generates random elements.
 func generateRandomElements(size int64) []int64 {
 	if size <= 0 {
 		fmt.Printf("Size %d<=0, Exceeded array size\n", size)
@@ -25,7 +24,6 @@ func generateRandomElements(size int64) []int64 {
 	}
 	return s
 }
-
 // maximum returns the maximum number of elements.
 func maximum(data []int64) int64 {
 	if len(data) == 0 {
@@ -45,20 +43,14 @@ func maxChunks(data []int64) int64 {
 	if len(data) == 0 {
 		return 0
 	}
-	var chunks int
-	if len(data) < CHUNKS {
-		chunks = len(data)
-	} else {
-		chunks = CHUNKS
-	}
-	var delta = len(data) / chunks
-	array := make([]int64, chunks)
+	var delta = len(data) / CHUNKS
+	array := make([]int64,CHUNKS)
 	var wg sync.WaitGroup
-	wg.Add(chunks)
-	for i := 0; i < chunks; i++ {
+	wg.Add(CHUNKS)
+	for i := 0; i < CHUNKS; i++ {
 		start := delta * i
 		stop := start + delta
-		if i == chunks-1 {
+		if i == CHUNKS-1 {
 			stop = len(data)
 		}
 		dataTemp := data[start:stop]
