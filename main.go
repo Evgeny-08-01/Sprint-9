@@ -43,7 +43,7 @@ func maxChunks(data []int64) int64 {
 	if len(data) == 0 {
 		return 0
 	}
-	var delta = len(data) / CHUNKS
+	var delta = (len(data) / CHUNKS)+1
 	array := make([]int64,CHUNKS)
 	var wg sync.WaitGroup
 	wg.Add(CHUNKS)
