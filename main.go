@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -15,23 +16,23 @@ const (
 //var mu sync.Mutex
 
 // generateRandomElements generates random elements.
-func generateRandomElements(size int) []int {
+func generateRandomElements(size int64) []int64 {
 	// ваш код здесь
 
 	if size <= 0 {
 		fmt.Printf("значение %d<=0, выходит за пределы допустимого размера массива\n", size)
-		return []int{}
+		return []int64{}
 	}
-	s := make([]int, size)
-	for i := 0; i < size; i++ {
-		s[i] = rand.Intn(100000000)
+	s := make([]int64, size)
+	for i := int64(0); i < size; i++ {
+		s[i] = int64(rand.Int())
 
 	}
 	return s
 }
 
 // maximum returns the maximum number of elements.
-func maximum(data []int) int {
+func maximum(data []int64) int64 {
 	// ваш код здесь
 	if len(data) == 0 {
 		return 0
@@ -46,40 +47,29 @@ func maximum(data []int) int {
 }
 
 // maxChunks returns the maximum number of elements in a chunks.
-func maxChunks(data []int) int {
+func maxChunks(data []int64) int64 {
 	// ваш код здесь
-	array := make([]int, CHUNKS)
-	var delta = (len(data) / CHUNKS) + 1
 	if len(data) == 0 {
 		return 0
 	}
+	array := make([]int64, CHUNKS)
+	var delta = (len(data) / CHUNKS) + 1
 
 	var wg sync.WaitGroup
-
 	wg.Add(CHUNKS)
 	for i := 0; i < CHUNKS; i++ {
-
-		resultCh := make(chan int, CHUNKS)
-		go func(i int) {
+		//resultCh := make(chan int)
+		start := delta * i
+		stop := delta * (i + 1)
+		if i == CHUNKS-1 {
+			stop = len(data)
+		}
+		dataTemp := data[start:stop]
+		go func(i int, dataTemp []int64) {
 			defer wg.Done()
-			start := delta * i
-			stop := delta * (i + 1)
-			if i == CHUNKS-1 {
-				stop = len(data)
-			}
-
-			max := maximum(data[start:stop]) //data[start]
-			//for j := start; j < stop; j++ {
-			//	if max < data[j] {
-			//		max = data[j]
-			//	}
-			//	}
-			//mu.Lock()
-			//array[i] = max
-			//mu.Unlock()
-			resultCh <- max
-		}(i)
-		array[i] = <-resultCh
+			max := maximum(dataTemp)
+			atomic.StoreInt64(&array[i], int64(max))
+		}(i, dataTemp)
 	}
 	wg.Wait()
 	return maximum(array)
