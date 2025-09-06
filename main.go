@@ -28,7 +28,7 @@ func generateRandomElements(size int64) []int64 {
 
 // maximum returns the maximum number of elements.
 func maximum(data []int64) int64 {
-	if len(data) == 0 {
+	if len(data) <CHUNKS{
 		return 0
 	}
 	max := data[0]

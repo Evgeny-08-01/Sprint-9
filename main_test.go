@@ -34,9 +34,11 @@ func TestMaximum(t *testing.T) {
 	}{
 		{"Test with positive numbers", []int64{0, 1, 2, 3, 4, 5, 6, 7, 8,
 			9, 10, 100, 200, 300, 500, 1000, 10000, 100000, 100000000}, 100000000},
-		{"Test with the same numbers", []int64{20, 20, 20, 20, 20, 20, 20}, 20},
+		{"Test with the same numbers", []int64{20, 20, 20, 20, 20, 20, 20,20,20}, 20},
 		{"Test with an empty slice", []int64{}, 0},
-		{"Single-number test", []int64{200}, 200},
+		{"Single element test", []int64{200}, 0},
+		{"7 elements test", []int64{1,4,888,99,665,335,56567764345}, 0},
+		{"8 elements test", []int64{87656,1,4,888,99,665,335,56567764345},56567764345},
 	}
 	for _, tt := range tests {
 		t.Run((tt.name), func(t *testing.T) {
