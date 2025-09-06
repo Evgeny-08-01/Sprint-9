@@ -52,16 +52,15 @@ func maxChunks(data []int64) int64 {
 	if len(data) == 0 {
 		return 0
 	}
-	array := make([]int64, CHUNKS)
-	var delta = (len(data) / CHUNKS) + 1
-
+	var delta = (len(data) + CHUNKS - 1) / CHUNKS
+	realCHUNKS := (len(data) + delta - 1) / delta
+	array := make([]int64, realCHUNKS)
 	var wg sync.WaitGroup
-	wg.Add(CHUNKS)
-	for i := 0; i < CHUNKS; i++ {
-		//resultCh := make(chan int)
+	wg.Add(realCHUNKS)
+	for i := 0; i < realCHUNKS; i++ {
 		start := delta * i
 		stop := delta * (i + 1)
-		if i == CHUNKS-1 {
+		if i == realCHUNKS-1 {
 			stop = len(data)
 		}
 		dataTemp := data[start:stop]

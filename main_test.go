@@ -8,6 +8,7 @@ import (
 )
 
 // Пишите тесты в этом файле
+
 func TestGenerateRandomElements(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -59,10 +60,27 @@ func TestMaximum(t *testing.T) {
 		})
 	}
 }
+
 func TestComparisonMax(t *testing.T) {
 	// Генерируем тестовый массив
 	testData := generateRandomElements(100000000)
 	max1 := maximum(testData)
 	max2 := maxChunks(testData)
 	assert.Equal(t, max1, max2, "Результаты поиска максимума отличаются. Ошибка")
+}
+
+func Test_maxChunks(t *testing.T) {
+	tests := []struct {
+		name string
+		data []int64
+		want int64
+	}{}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := maxChunks(tt.data)
+			if true {
+				t.Errorf("maxChunks() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
