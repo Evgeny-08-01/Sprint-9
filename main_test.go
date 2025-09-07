@@ -10,8 +10,8 @@ import (
 func TestGenerateRandomElements(t *testing.T) {
 	tests := []struct {
 		name        string
-		lenReal     int64
-		lenExpected int64
+		lenReal     int
+		lenExpected int
 	}{
 		{"Slice length matching test=1", 1, 1}, {"Slice length matching test=7", 7, 7},
 		{"Slice length matching test=8", 8, 8}, {"Slice length matching test=9", 9, 9},
@@ -29,16 +29,16 @@ func TestGenerateRandomElements(t *testing.T) {
 func TestMaximum(t *testing.T) {
 	tests := []struct {
 		name     string
-		in       []int64
-		expected int64
+		in       []int
+		expected int
 	}{
-		{"Test with positive numbers", []int64{0, 1, 2, 3, 4, 5, 6, 7, 8,
+		{"Test with positive numbers", []int{0, 1, 2, 3, 4, 5, 6, 7, 8,
 			9, 10, 100, 200, 300, 500, 1000, 10000, 100000, 100000000}, 100000000},
-		{"Test with the same numbers", []int64{20, 20, 20, 20, 20, 20, 20,20,20}, 20},
-		{"Test with an empty slice", []int64{}, 0},
-		{"Single element test", []int64{200}, 0},
-		{"7 elements test", []int64{1,4,888,99,665,335,56567764345}, 0},
-		{"8 elements test", []int64{87656,1,4,888,99,665,335,56567764345},56567764345},
+		{"Test with the same numbers", []int{20, 20, 20, 20, 20, 20, 20, 20, 20}, 20},
+		{"Test with an empty slice", []int{}, 0},
+		{"Single element test", []int{200}, 0},
+		{"7 elements test", []int{1, 4, 888, 99, 665, 335, 56567764345}, 0},
+		{"8 elements test", []int{87656, 1, 4, 888, 99, 665, 335, 56567764345}, 56567764345},
 	}
 	for _, tt := range tests {
 		t.Run((tt.name), func(t *testing.T) {
@@ -52,3 +52,5 @@ func TestComparisonMax(t *testing.T) {
 	max2 := maxChunks(testData)
 	assert.Equal(t, max1, max2, "Maximum search results are different. Test failed")
 }
+
+

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math/rand"
 	"sync"
-	"sync/atomic"
 	"time"
 )
 
@@ -14,21 +13,21 @@ const (
 )
 
 // generateRandomElements generates random elements.
-func generateRandomElements(size int64) []int64 {
+func generateRandomElements(size int) []int {
 	if size <= 0 {
 		fmt.Printf("Size %d<=0, Exceeded array size\n", size)
-		return []int64{}
+		return []int{}
 	}
-	s := make([]int64, size)
-	for i := int64(0); i < size; i++ {
-		s[i] = int64(rand.Int())
+	s := make([]int, size)
+	for i := 0; i < size; i++ {
+		s[i] = rand.Int()
 	}
 	return s
 }
 
 // maximum returns the maximum number of elements.
-func maximum(data []int64) int64 {
-	if len(data) <CHUNKS{
+func maximum(data []int) int {
+	if len(data) < CHUNKS {
 		return 0
 	}
 	max := data[0]
@@ -41,25 +40,26 @@ func maximum(data []int64) int64 {
 }
 
 // maxChunks returns the maximum number of elements in a chunks.
-func maxChunks(data []int64) int64 {
+func maxChunks(data []int) int {
 	if len(data) == 0 {
 		return 0
 	}
 	var delta = (len(data) / CHUNKS) + 1
-	array := make([]int64, CHUNKS)
+	array := make([]int, CHUNKS)
 	var wg sync.WaitGroup
 	wg.Add(CHUNKS)
 	for i := 0; i < CHUNKS; i++ {
+
 		start := delta * i
 		stop := start + delta
 		if i == CHUNKS-1 {
 			stop = len(data)
 		}
 		dataTemp := data[start:stop]
-		go func(i int, dataTemp []int64) {
+		go func(i int, dataTemp []int) {
 			defer wg.Done()
 			max := maximum(dataTemp)
-			atomic.StoreInt64(&array[i], int64(max))
+			array[i] = max
 		}(i, dataTemp)
 	}
 	wg.Wait()
